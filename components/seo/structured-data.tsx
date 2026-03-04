@@ -11,7 +11,7 @@ export function StructuredData() {
     logo: "https://pulsecalendar.app/icon-512.png",
     description: "PulseCalendar brengt al je Google Calendar en iCloud events samen in één overzichtelijke kalender.",
     sameAs: [
-      "https://github.com/OpenCalendarsHQ/opencalendar",
+      "https://github.com/iPulseHQ/PulseCalendar",
     ],
   };
 

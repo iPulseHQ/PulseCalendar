@@ -4,7 +4,7 @@ Open-source calendar app that syncs Google Calendar, iCloud, Microsoft and CalDA
 
 Built with Next.js, Supabase and Drizzle ORM. Desktop app powered by Tauri.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FOpenCalendarsHQ%2Fopencalendar&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,DATABASE_URL&project-name=opencalendar&repository-name=opencalendar)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FiPulseHQ%2FPulseCalendar&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,DATABASE_URL&project-name=pulsecalendar&repository-name=pulsecalendar)
 
 ## Features
 
@@ -18,7 +18,7 @@ Built with Next.js, Supabase and Drizzle ORM. Desktop app powered by Tauri.
 ## Getting started
 
 ```bash
-git clone https://github.com/OpenCalendarsHQ/opencalendar.git
+git clone https://github.com/iPulseHQ/PulseCalendar.git
 cd opencalendar
 npm install
 cp .env.example .env.local  # fill in your keys
