@@ -69,6 +69,7 @@ function DashboardContent() {
   const hasSynced = useRef(false);
   const hasInitialized = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
+  const isFetchingRef = useRef(false);
   const calendarRef = useRef<CalendarViewRef>(null);
   const syncingStartTime = useRef<number>(0);
 
@@ -152,6 +153,10 @@ function DashboardContent() {
 
   const fetchEvents = useCallback(
     async (signal?: AbortSignal) => {
+      // Prevent duplicate concurrent fetches (e.g. from isSyncing poll + periodic refresh)
+      if (isFetchingRef.current) return 0;
+      isFetchingRef.current = true;
+
       const cacheKey = `${dateRange.start}-${dateRange.end}`;
 
       // Use in-memory cache for instant feedback if available
@@ -167,6 +172,7 @@ function DashboardContent() {
         // Handle authentication errors (expired session)
         if (res.status === 401) {
           toast.error(t("sessionExpired"));
+          isFetchingRef.current = false;
           router.push("/auth/sign-in");
           return -1;
         }
@@ -179,6 +185,7 @@ function DashboardContent() {
           toast.error(t("tooManyRequests", { seconds: waitSeconds }));
           setLoading(false);
           setIsSyncing(false);
+          isFetchingRef.current = false;
           return -1;
         }
 
@@ -187,6 +194,7 @@ function DashboardContent() {
           const data = await res.json().catch(() => ({ error: "Onbekende fout" }));
           toast.error(data.error || `Fout bij ophalen van events (${res.status})`);
           setLoading(false);
+          isFetchingRef.current = false;
           return 0;
         }
 
@@ -205,13 +213,16 @@ function DashboardContent() {
           }
 
           setLoading(false);
+          isFetchingRef.current = false;
           return data.length;
         } else {
           toast.error(t("invalidResponse"));
           setLoading(false);
+          isFetchingRef.current = false;
           return 0;
         }
       } catch (err) {
+        isFetchingRef.current = false;
         // Ignore abort errors
         if (err instanceof DOMException && err.name === "AbortError") {
           return 0;
