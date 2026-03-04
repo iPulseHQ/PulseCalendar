@@ -1,36 +1,24 @@
-import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
-
-export function useSupabase() {
-  return createClient();
-}
+import { useUser } from "@clerk/nextjs";
 
 export function useSession() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isPending, setIsPending] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setIsPending(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setIsPending(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+  const { user, isLoaded } = useUser();
 
   return {
-    data: user,
-    isPending,
+    data: user ? {
+      id: user.id,
+      email: user.emailAddresses[0]?.emailAddress,
+      user_metadata: {
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+        avatar_url: user.imageUrl || null,
+      }
+    } : null,
+    isPending: !isLoaded,
   };
+}
+
+export function useSupabase() {
+  // Return a mock or handle it elsewhere if needed. 
+  // Most Supabase calls should be replaced with API calls now.
+  console.warn("useSupabase is deprecated, use Clerk or API routes instead");
+  return null;
 }

@@ -39,16 +39,16 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         {/* Content */}
         <Link href="/" className="flex items-center gap-3 relative z-10">
-          <Image src="/icon.svg" alt="OpenCalendars" width={40} height={40} />
+          <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
 
-          <span className="font-pixel text-2xl font-bold text-white">OPENCALENDARS</span>
+          <span className="font-pixel text-2xl font-bold text-white">PULSECALENDAR</span>
 
         </Link>
 
         <div className="relative z-10">
           <h1 className="mb-4 text-5xl font-pixel font-bold leading-tight text-white">
             Build <span className="text-blue-400">better schedules</span><br />
-            with OpenCalendars
+            with PulseCalendar
 
           </h1>
           <p className="text-xl text-zinc-400">
@@ -59,7 +59,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="text-xs text-zinc-500 relative z-10">
           Powered by{" "}
           <Link href="/" className="text-zinc-400 hover:text-white">
-            OpenCalendars
+            PulseCalendar
 
           </Link>
         </div>
@@ -69,9 +69,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex w-full items-center justify-center bg-[#111111] lg:w-1/2">
         <div className="w-full max-w-md px-8">
           <Link href="/" className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <Image src="/icon.svg" alt="OpenCalendars" width={40} height={40} />
+            <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
 
-            <span className="font-pixel text-2xl font-bold text-white">OPENCALENDARS</span>
+            <span className="font-pixel text-2xl font-bold text-white">PULSECALENDAR</span>
 
           </Link>
           {children}

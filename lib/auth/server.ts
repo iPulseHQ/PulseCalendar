@@ -1,17 +1,26 @@
-import { createClient } from "@/lib/supabase/server";
+import { currentUser, auth } from "@clerk/nextjs/server";
 
 export async function getUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  const user = await currentUser();
+  if (!user) return null;
+
+  // Return compatible user object if needed
+  return {
+    id: user.id,
+    email: user.emailAddresses[0]?.emailAddress,
+    user_metadata: {
+      name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+      avatar_url: user.imageUrl || null,
+    }
+  };
 }
 
 export async function getSession() {
-  const supabase = await createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session;
+  const { sessionId, userId } = await auth();
+  if (!userId) return null;
+
+  return {
+    id: sessionId,
+    user: { id: userId }
+  };
 }

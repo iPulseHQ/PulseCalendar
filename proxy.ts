@@ -1,39 +1,54 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { corsMiddleware, handleCorsPreflightRequest } from "./middleware-cors";
-import createMiddleware from 'next-intl/middleware';
 
-const intlMiddleware = createMiddleware({
-  locales: ['en', 'nl'],
-  defaultLocale: 'nl',
-  localePrefix: 'never'
-});
+const isPublicRoute = createRouteMatcher([
+  "/",
+  "/welcome(.*)",
+  "/auth(.*)",
+  "/api/(.*)",
+  "/privacy(.*)",
+  "/terms(.*)",
+  "/sitemap(.*)",
+  "/robots(.*)",
+]);
 
-export async function proxy(request: NextRequest) {
-  // Check if this is an API route
-  const isApiRoute = request.nextUrl.pathname.startsWith("/api/") || 
-                     request.nextUrl.pathname.startsWith("/auth/api/");
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
+  const isApiRoute = req.nextUrl.pathname.startsWith("/api/") ||
+    req.nextUrl.pathname.startsWith("/auth/api/");
 
   // 1. Handle CORS preflight requests for API routes
-  if (request.method === "OPTIONS" && isApiRoute) {
-    return handleCorsPreflightRequest(request);
+  if (req.method === "OPTIONS" && isApiRoute) {
+    return handleCorsPreflightRequest(req);
   }
 
-  // 2. Handle internationalization (skip for API routes)
-  const response = isApiRoute ? NextResponse.next() : intlMiddleware(request);
+  // Handle root route redirects
+  if (req.nextUrl.pathname === "/") {
+    const url = req.nextUrl.clone();
+    url.pathname = userId ? "/dashboard" : "/welcome";
+    return NextResponse.redirect(url);
+  }
 
-  // 3. Update supabase session
-  // Note: updateSession will create its own response if it needs to redirect,
-  // but we want to preserve any locale cookies set by intlMiddleware.
-  const sessionResponse = await updateSession(request);
+  // Protected routes — Clerk redirects to NEXT_PUBLIC_CLERK_SIGN_IN_URL when unauthenticated
+  if (!isPublicRoute(req)) {
+    await auth.protect();
+  }
 
-  // 4. Add CORS headers to API responses for desktop app
+  // Redirect authenticated users away from welcome pages
+  if (userId && req.nextUrl.pathname.startsWith("/welcome")) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
+  // Add CORS headers to API responses for desktop app
   if (isApiRoute) {
-    return corsMiddleware(request, sessionResponse);
+    return corsMiddleware(req, NextResponse.next());
   }
 
-  return sessionResponse;
-}
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
@@ -45,5 +60,7 @@ export const config = {
      * - public folder
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
   ],
 };

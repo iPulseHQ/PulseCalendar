@@ -1,5 +1,5 @@
 {
-  "name": "opencalendar-desktop",
+  "name": "pulsecalendar-desktop",
   "private": true,
   "version": "0.2.0",
   "type": "module",
@@ -22,24 +22,24 @@
     "@tauri-apps/plugin-updater": "^2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.563.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "rrule": "^2.8.1",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@tauri-apps/cli": "^2",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10",
-    "sharp": "^0.33.5",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "to-ico": "^1.1.5",
-    "typescript": "~5.8.3",
-    "vite": "^7.0.4"
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
   }
 }

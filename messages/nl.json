@@ -10,7 +10,7 @@
   "Settings": {
     "title": "Instellingen",
     "description": "Beheer je voorkeuren",
-"tabs": {
+    "tabs": {
       "calendars": "Kalender accounts",
       "account": "Account",
       "appearance": "Weergave",
@@ -35,7 +35,7 @@
     "new": "Nieuw",
     "addTask": "Nieuwe taak toevoegen",
     "addTaskPlaceholder": "Wat moet er gebeuren?",
-    "addTaskDescription": "Deze taak wordt toegevoegd aan je persoonlijke OpenCalendar lijst.",
+    "addTaskDescription": "Deze taak wordt toegevoegd aan je persoonlijke PulseCalendar lijst.",
     "add": "Toevoegen",
     "adding": "Bezig...",
     "cancel": "Annuleren",
@@ -91,8 +91,7 @@
   },
   "Auth": {
     "signInTitle": "Welkom terug",
-    "signInSubtitle": "Log in op je OpenCalendars account",
-
+    "signInSubtitle": "Log in op je PulseCalendar account",
     "signUpTitle": "Account aanmaken",
     "signUpSubtitle": "Begin met het syncen van je kalenders",
     "continueWithGoogle": "Doorgaan met Google",
@@ -107,22 +106,22 @@
     "haveAccount": "Heb je al een account?",
     "register": "Registreren",
     "login": "Inloggen",
-    "desktopLoginTitle": "OpenCalendars Desktop",
+    "desktopLoginTitle": "PulseCalendar Desktop",
     "desktopLoginSubtitle": "Log in om je desktop app te koppelen",
     "desktopLoginInfo": "Na het inloggen wordt je desktop app automatisch geactiveerd",
     "authenticating": "Authenticeren...",
     "loading": "Laden...",
     "generatingTokens": "Tokens genereren...",
-    "redirectingToApp": "Doorsturen naar OpenCalendars...",
+    "redirectingToApp": "Doorsturen naar PulseCalendar...",
     "redirectFailed": "Als de app niet automatisch opent, sluit dit venster en probeer het opnieuw.",
     "authenticationFailed": "Authenticatie mislukt. Sluit dit venster en probeer het opnieuw."
   },
   "Welcome": {
     "title": "Al je kalenders op één plek",
-    "subtitle": "OpenCalendars brengt al je Google Calendar en iCloud events samen. Bouw betere schema's met een unified view van je tijd.",
+    "subtitle": "PulseCalendar brengt al je Google Calendar en iCloud events samen. Bouw betere schema's met een unified view van je tijd.",
     "getStarted": "Aan de slag",
     "signIn": "Inloggen",
-    "brand": "OPENCALENDARS",
+    "brand": "PULSECALENDAR",
     "github": "GitHub",
     "privacy": "Privacy",
     "terms": "Voorwaarden",
@@ -146,12 +145,12 @@
     }
   },
   "Onboarding": {
-    "welcomeTitle": "Welkom bij OpenCalendars",
-    "welcomeDesc": "Met OpenCalendars heb je al je kalenders op één plek. Koppel je Google Calendar en beleef je agenda op een nieuwe manier.",
+    "welcomeTitle": "Welkom bij PulseCalendar",
+    "welcomeDesc": "Met PulseCalendar heb je al je kalenders op één plek. Koppel je Google Calendar en beleef je agenda op een nieuwe manier.",
     "getStarted": "Aan de slag",
     "skip": "Overslaan",
     "connectTitle": "Koppel je agenda",
-    "connectDesc": "Sluit je Google Calendar aan via OpenCalendars om al je afspraken in één overzicht te zien.",
+    "connectDesc": "Sluit je Google Calendar aan via PulseCalendar om al je afspraken in één overzicht te zien.",
     "connectGoogle": "Koppel Google Calendar",
     "connecting": "Bezig met koppelen...",
     "connectedGoogle": "Google Calendar gekoppeld",

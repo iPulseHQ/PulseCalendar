@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { useUser } from "@clerk/nextjs";
 import { Loader2, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -21,24 +19,20 @@ function GoogleIcon({ className }: { className?: string }) {
 export function AccountTab() {
   const t = useTranslations("Onboarding");
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
+  const { user, isLoaded } = useUser();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setLoading(false);
-    });
-  }, [supabase]);
-
-  if (loading) {
+  if (!isLoaded) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
       </div>
     );
   }
+
+  const email = user?.emailAddresses[0]?.emailAddress;
+  const createdAt = user?.createdAt ? new Date(user.createdAt) : null;
+  const lastSignInAt = user?.lastSignInAt ? new Date(user.lastSignInAt) : null;
+  const provider = user?.externalAccounts[0]?.provider;
 
   return (
     <div className="space-y-6">
@@ -48,12 +42,12 @@ export function AccountTab() {
           <div className="space-y-3">
             <div>
               <label className="text-xs font-medium text-muted-foreground">Email</label>
-              <p className="text-sm text-foreground mt-1">{user?.email}</p>
+              <p className="text-sm text-foreground mt-1">{email}</p>
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Account aangemaakt</label>
               <p className="text-sm text-foreground mt-1">
-                {user?.created_at ? new Date(user.created_at).toLocaleDateString("nl-NL", {
+                {createdAt ? createdAt.toLocaleDateString("nl-NL", {
                   year: "numeric",
                   month: "long",
                   day: "numeric"
@@ -63,7 +57,7 @@ export function AccountTab() {
             <div>
               <label className="text-xs font-medium text-muted-foreground">Laatst ingelogd</label>
               <p className="text-sm text-foreground mt-1">
-                {user?.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString("nl-NL", {
+                {lastSignInAt ? lastSignInAt.toLocaleDateString("nl-NL", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -78,7 +72,7 @@ export function AccountTab() {
         <div className="pt-6 border-t border-border">
           <h2 className="text-sm font-semibold text-foreground mb-4">Authenticatie methode</h2>
           <div className="flex items-center gap-3">
-            {user?.app_metadata?.provider === "google" ? (
+            {provider === "google" ? (
               <>
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-muted">
                   <GoogleIcon className="h-4 w-4" />

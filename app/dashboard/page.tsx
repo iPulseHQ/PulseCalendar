@@ -17,6 +17,8 @@ import {
   addDays,
 } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { MigrationPopup } from "@/components/auth/migration-popup";
+import { toast } from "sonner";
 
 // LocalStorage cache keys
 const EVENTS_CACHE_KEY = "opencalendar_events_cache";
@@ -32,18 +34,18 @@ function DashboardContent() {
   const eventCache = useRef<Map<string, any[]>>(new Map());
   const [loading, setLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { 
-    currentDate, 
-    viewType, 
-    weekStartsOn, 
-    setCurrentDate, 
-    setViewType, 
-    registerCreateEvent, 
-    registerOpenEvent, 
-    registerRefreshEvents, 
+  const syncToastId = useRef<string | number | null>(null);
+  const {
+    currentDate,
+    viewType,
+    weekStartsOn,
+    setCurrentDate,
+    setViewType,
+    registerCreateEvent,
+    registerOpenEvent,
+    registerRefreshEvents,
     refreshEvents,
-    visibleCalendarIds 
+    visibleCalendarIds
   } = useCalendar();
   const { settings } = useSettings();
   const { todos, toggleTodo } = useTodos();
@@ -75,10 +77,10 @@ function DashboardContent() {
     try {
       const cached = localStorage.getItem(EVENTS_CACHE_KEY);
       const timestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-      
+
       if (cached && timestamp) {
         const age = Date.now() - parseInt(timestamp, 10);
-        
+
         // Use cache even if expired (for instant feedback), but still fetch fresh data
         if (age < CACHE_EXPIRY * 10) { // Keep cache for max 50 minutes
           const cachedEvents = JSON.parse(cached);
@@ -151,7 +153,7 @@ function DashboardContent() {
   const fetchEvents = useCallback(
     async (signal?: AbortSignal) => {
       const cacheKey = `${dateRange.start}-${dateRange.end}`;
-      
+
       // Use in-memory cache for instant feedback if available
       if (eventCache.current.has(cacheKey)) {
         setRawEvents(eventCache.current.get(cacheKey)!);
@@ -159,15 +161,14 @@ function DashboardContent() {
       }
 
       try {
-        setError(null); // Clear previous errors
         const url = `/api/events?start=${encodeURIComponent(dateRange.start)}&end=${encodeURIComponent(dateRange.end)}`;
         const res = await fetch(url, { signal });
 
         // Handle authentication errors (expired session)
         if (res.status === 401) {
-          setError(t("sessionExpired"));
+          toast.error(t("sessionExpired"));
           router.push("/auth/sign-in");
-          return -1; // Return -1 to indicate auth error (stops polling)
+          return -1;
         }
 
         // Handle rate limiting
@@ -175,17 +176,16 @@ function DashboardContent() {
           const retryAfter = res.headers.get('Retry-After');
           const waitSeconds = retryAfter ? parseInt(retryAfter) : 60;
           console.warn(`Rate limited, waiting ${waitSeconds}s`);
-          setError(t("tooManyRequests", { seconds: waitSeconds }));
+          toast.error(t("tooManyRequests", { seconds: waitSeconds }));
           setLoading(false);
-          // Stop syncing if we hit rate limits
           setIsSyncing(false);
-          return -1; // Return -1 to stop polling
+          return -1;
         }
 
         // Handle other errors
         if (!res.ok) {
           const data = await res.json().catch(() => ({ error: "Onbekende fout" }));
-          setError(data.error || `Fout bij ophalen van events (${res.status})`);
+          toast.error(data.error || `Fout bij ophalen van events (${res.status})`);
           setLoading(false);
           return 0;
         }
@@ -195,7 +195,7 @@ function DashboardContent() {
           // Store raw events (including RRULE metadata)
           setRawEvents(data);
           eventCache.current.set(cacheKey, data);
-          
+
           // Persist to localStorage for instant loading on next visit
           try {
             localStorage.setItem(EVENTS_CACHE_KEY, JSON.stringify(data));
@@ -203,11 +203,11 @@ function DashboardContent() {
           } catch (err) {
             console.warn("Failed to cache events to localStorage:", err);
           }
-          
+
           setLoading(false);
           return data.length;
         } else {
-          setError(t("invalidResponse"));
+          toast.error(t("invalidResponse"));
           setLoading(false);
           return 0;
         }
@@ -218,7 +218,7 @@ function DashboardContent() {
         }
 
         console.error("Fetch events error:", err);
-        setError(t("networkError"));
+        toast.error(t("networkError"));
         setLoading(false);
         return 0;
       }
@@ -246,7 +246,7 @@ function DashboardContent() {
   const triggerSync = useCallback(async () => {
     if (hasSynced.current) return;
     hasSynced.current = true;
-    
+
     // Run sync in background without blocking UI
     (async () => {
       try {
@@ -256,7 +256,7 @@ function DashboardContent() {
           console.log("No calendars found, skipping sync");
           return;
         }
-        
+
         const res = await fetch("/api/calendars");
 
         if (res.status === 401) {
@@ -272,7 +272,7 @@ function DashboardContent() {
         // Sync all accounts in parallel (max 3 at a time to avoid rate limits)
         const nonLocalGroups = groups.filter(group => group.provider !== "local");
         if (nonLocalGroups.length === 0) return;
-        
+
         // Sync in batches of 3 to avoid overwhelming the server
         for (let i = 0; i < nonLocalGroups.length; i += 3) {
           const batch = nonLocalGroups.slice(i, i + 3);
@@ -311,7 +311,7 @@ function DashboardContent() {
             await new Promise(resolve => setTimeout(resolve, 500));
           }
         }
-        
+
         // Refetch events after sync completes
         await fetchEvents();
       } catch (err) {
@@ -331,10 +331,10 @@ function DashboardContent() {
     const init = async () => {
       // Check if we have cached data (only check once)
       const hasCachedData = rawEvents.length > 0;
-      
+
       // Start fetching events immediately (will use cache if available)
       const fetchPromise = fetchEvents(controller.signal);
-      
+
       // If we already have cached data showing, don't block on fetch
       if (hasCachedData) {
         // Fetch in background
@@ -352,7 +352,7 @@ function DashboardContent() {
           triggerSync();
         }
       }
-      
+
       hasInitialized.current = true;
     };
     init();
@@ -360,6 +360,18 @@ function DashboardContent() {
     return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEvents, triggerSync, session, isPending]);
+
+  // Show/hide syncing toast
+  useEffect(() => {
+    if (isSyncing) {
+      syncToastId.current = toast.loading(t("syncing"), { duration: Infinity });
+    } else {
+      if (syncToastId.current !== null) {
+        toast.dismiss(syncToastId.current);
+        syncToastId.current = null;
+      }
+    }
+  }, [isSyncing, t]);
 
   // Rapid polling during initial sync - max 15 attempts with exponential backoff
   useEffect(() => {
@@ -378,16 +390,14 @@ function DashboardContent() {
 
       pollCount++;
       const eventCount = await fetchEvents();
-      
-      // Stop polling if we got events, hit rate limit (-1), or auth error
+
       if (eventCount > 0 || eventCount === -1) {
         setTimeout(() => setIsSyncing(false), 3000);
         return;
       }
 
-      // Exponential backoff: 2s, 2s, 2s, 4s, 4s, 4s, 8s, 8s...
       const delay = Math.min(2000 * Math.pow(2, Math.floor((pollCount - 1) / 3)), 10000);
-      
+
       if (pollCount < maxPolls) {
         timeoutId = setTimeout(pollEvents, delay);
       } else {
@@ -395,10 +405,8 @@ function DashboardContent() {
       }
     };
 
-    // Start first poll immediately
     timeoutId = setTimeout(pollEvents, 1000);
 
-    // Safety timeout after 60 seconds
     const safetyTimeout = setTimeout(() => {
       isCancelled = true;
       setIsSyncing(false);
@@ -467,30 +475,7 @@ function DashboardContent() {
 
   return (
     <>
-      {error && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 backdrop-blur-sm px-4 py-2 shadow-lg">
-            <svg className="h-4 w-4 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-sm font-medium text-destructive">{error}</span>
-            <button onClick={() => setError(null)} className="ml-2 text-destructive hover:text-destructive/80 transition-colors">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {isSyncing && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="flex items-center gap-2 rounded-full border border-border bg-popover/95 backdrop-blur-sm px-4 py-2 shadow-lg">
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
-            <span className="text-xs font-medium text-foreground min-w-[100px] text-center">{t("syncing")}</span>
-          </div>
-        </div>
-      )}
+      <MigrationPopup />
 
       <CalendarView
         ref={calendarRef}

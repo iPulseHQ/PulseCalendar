@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { verifyToken } from "./jwt";
 
 export interface AuthUser {
@@ -15,7 +15,7 @@ export interface AuthResult {
 }
 
 /**
- * Verify authentication from either JWT Bearer token or Supabase Auth session
+ * Verify authentication from either JWT Bearer token or Clerk session
  * This allows both web app (session cookies) and desktop app (JWT) to use the same API
  */
 export async function verifyRequest(request: NextRequest): Promise<AuthResult> {
@@ -40,19 +40,17 @@ export async function verifyRequest(request: NextRequest): Promise<AuthResult> {
     }
   }
 
-  // Fallback to Supabase Auth session (web app)
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Fallback to Clerk session (web app)
+  const { userId } = await auth();
 
-  if (user) {
+  if (userId) {
+    const user = await currentUser();
     return {
       user: {
-        id: user.id,
-        email: user.email || "",
-        name: user.user_metadata?.name || user.user_metadata?.full_name || null,
-        image: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
+        id: userId,
+        email: user?.emailAddresses[0]?.emailAddress || "",
+        name: user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() || null : null,
+        image: user?.imageUrl || null,
       },
       source: "session",
     };

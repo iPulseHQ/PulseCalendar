@@ -3,38 +3,30 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@clerk/nextjs";
 
 export default function DesktopLoginPage() {
   const router = useRouter();
   const t = useTranslations("Auth");
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoaded } = useUser();
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const supabase = createClient();
 
   useEffect(() => {
-    // Check if user is logged in
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      setLoading(false);
-
-      // If logged in, redirect to token generation
-      if (user && !isRedirecting) {
-        setIsRedirecting(true);
-        setTimeout(() => {
-          window.location.href = "/auth/desktop-token";
-        }, 500);
-      }
-    });
-  }, [supabase, isRedirecting]);
+    // If logged in, redirect to token generation
+    if (isLoaded && user && !isRedirecting) {
+      setIsRedirecting(true);
+      setTimeout(() => {
+        window.location.href = "/auth/desktop-token";
+      }, 500);
+    }
+  }, [isLoaded, user, isRedirecting]);
 
   function handleLogin() {
     // Redirect to sign-in with return URL
     router.push("/auth/sign-in?redirectTo=/auth/desktop-login");
   }
 
-  if (loading) {
+  if (!isLoaded) {
     return (
       <div className="w-full">
         <div className="mb-8">

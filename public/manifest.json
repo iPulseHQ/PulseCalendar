@@ -1,18 +1,23 @@
 {
-  "name": "OpenCalendars",
-  "short_name": "OpenCalendars",
-
+  "name": "PulseCalendar",
+  "short_name": "PulseCalendar",
   "description": "Een moderne kalender app met Google en iCloud sync",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "orientation": "any",
   "lang": "nl",
   "dir": "ltr",
-  "categories": ["productivity", "utilities"],
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -44,19 +49,34 @@
       "name": "Nieuw evenement",
       "short_name": "Nieuw",
       "url": "/?action=create",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Vandaag",
       "short_name": "Vandaag",
       "url": "/today",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Taken",
       "short_name": "Taken",
       "url": "/tasks",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

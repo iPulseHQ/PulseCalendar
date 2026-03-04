@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
   title: "OpenCalendars - Al je kalenders op één plek",
@@ -11,10 +11,9 @@ export const metadata: Metadata = {
 };
 
 export default async function RootPage() {
-  const supabase = await createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const { userId } = await auth();
 
-  if (session) {
+  if (userId) {
     redirect("/dashboard");
   } else {
     redirect("/welcome");

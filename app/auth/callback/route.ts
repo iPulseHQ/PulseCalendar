@@ -1,48 +1,19 @@
-import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
+/**
+ * Auth callback route — was used for Supabase OAuth code exchange.
+ * With Clerk, OAuth is handled automatically. This route just redirects
+ * to /dashboard for any legacy links that might still hit this endpoint.
+ */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
-  let next = searchParams.get("next") ?? "/";
+  let next = searchParams.get("next") ?? "/dashboard";
 
-  // Decode the next parameter if it's URL encoded
   try {
     next = decodeURIComponent(next);
   } catch {
-    next = "/";
+    next = "/dashboard";
   }
 
-  console.log("Auth callback received:", {
-    code: code ? `${code.substring(0, 10)}...` : null,
-    next,
-    origin,
-  });
-
-  if (code) {
-    const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-    if (error) {
-      console.error("Auth callback error:", error.message, error.status);
-      return NextResponse.redirect(`${origin}/auth/auth-code-error`);
-    }
-
-    if (data.session) {
-      console.log("Auth callback success, user:", data.user?.email);
-      const forwardedHost = request.headers.get("x-forwarded-host");
-      const isLocalEnv = process.env.NODE_ENV === "development";
-
-      if (isLocalEnv) {
-        return NextResponse.redirect(`${origin}${next}`);
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`);
-      } else {
-        return NextResponse.redirect(`${origin}${next}`);
-      }
-    }
-  }
-
-  console.error("Auth callback failed: no code provided");
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`);
+  return NextResponse.redirect(`${origin}${next}`);
 }

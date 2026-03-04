@@ -10,7 +10,7 @@
   "Settings": {
     "title": "Settings",
     "description": "Manage your preferences",
-"tabs": {
+    "tabs": {
       "calendars": "Calendar accounts",
       "account": "Account",
       "appearance": "Appearance",
@@ -35,7 +35,7 @@
     "new": "New",
     "addTask": "Add new task",
     "addTaskPlaceholder": "What needs to be done?",
-    "addTaskDescription": "This task will be added to your personal OpenCalendar list.",
+    "addTaskDescription": "This task will be added to your personal PulseCalendar list.",
     "add": "Add",
     "adding": "Adding...",
     "cancel": "Cancel",
@@ -91,8 +91,7 @@
   },
   "Auth": {
     "signInTitle": "Welcome back",
-    "signInSubtitle": "Sign in to your OpenCalendars account",
-
+    "signInSubtitle": "Sign in to your PulseCalendar account",
     "signUpTitle": "Create account",
     "signUpSubtitle": "Start syncing your calendars",
     "continueWithGoogle": "Continue with Google",
@@ -107,22 +106,22 @@
     "haveAccount": "Already have an account?",
     "register": "Register",
     "login": "Login",
-    "desktopLoginTitle": "OpenCalendars Desktop",
+    "desktopLoginTitle": "PulseCalendar Desktop",
     "desktopLoginSubtitle": "Sign in to connect your desktop app",
     "desktopLoginInfo": "Your desktop app will be automatically activated after signing in",
     "authenticating": "Authenticating...",
     "loading": "Loading...",
     "generatingTokens": "Generating tokens...",
-    "redirectingToApp": "Redirecting to OpenCalendars...",
+    "redirectingToApp": "Redirecting to PulseCalendar...",
     "redirectFailed": "If the app did not open automatically, please close this window and try again.",
     "authenticationFailed": "Authentication failed. Please close this window and try again."
   },
   "Welcome": {
     "title": "Sync all your calendars in one place",
-    "subtitle": "OpenCalendars brings all your Google Calendar and iCloud events together. Build better schedules with a unified view of your time.",
+    "subtitle": "PulseCalendar brings all your Google Calendar and iCloud events together. Build better schedules with a unified view of your time.",
     "getStarted": "Get Started",
     "signIn": "Sign In",
-    "brand": "OPENCALENDARS",
+    "brand": "PULSECALENDAR",
     "github": "GitHub",
     "privacy": "Privacy",
     "terms": "Terms",
@@ -146,12 +145,12 @@
     }
   },
   "Onboarding": {
-    "welcomeTitle": "Welcome to OpenCalendars",
-    "welcomeDesc": "With OpenCalendars, all your calendars in one place. Connect your Google Calendar and experience your agenda in a new way.",
+    "welcomeTitle": "Welcome to PulseCalendar",
+    "welcomeDesc": "With PulseCalendar, all your calendars in one place. Connect your Google Calendar and experience your agenda in a new way.",
     "getStarted": "Get started",
     "skip": "Skip",
     "connectTitle": "Connect your calendar",
-    "connectDesc": "Link your Google Calendar through OpenCalendars to see all your appointments in one overview.",
+    "connectDesc": "Link your Google Calendar through PulseCalendar to see all your appointments in one overview.",
     "connectGoogle": "Connect Google Calendar",
     "connecting": "Connecting...",
     "connectedGoogle": "Google Calendar connected",
