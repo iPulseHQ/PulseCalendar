@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const REPO_OWNER = "OpenCalendarsHQ";
-const REPO_NAME = "opencalendar";
+const REPO_OWNER = "iPulseHQ";
+const REPO_NAME = "PulseCalendar";
 
 export async function GET() {
   const token = process.env.GITHUB_RELEASES_TOKEN;
@@ -19,8 +19,8 @@ export async function GET() {
 
   try {
     // Get all releases and find the latest non-prerelease
-    const response = await fetch(url, { 
-      headers, 
+    const response = await fetch(url, {
+      headers,
       cache: 'no-store' // Disable cache for immediate updates
     });
 
@@ -34,7 +34,7 @@ export async function GET() {
 
     const releases = await response.json();
     console.log("Total releases found:", releases.length);
-    
+
     if (!releases.length) {
       console.error("No releases found");
       return NextResponse.json(null);
@@ -42,12 +42,12 @@ export async function GET() {
 
     // Find first non-draft, non-prerelease release, or fallback to first release
     const rel = releases.find((r: { draft: boolean; prerelease: boolean }) => !r.draft && !r.prerelease) || releases[0];
-    
+
     console.log("Selected release:", rel.tag_name, "with", rel.assets?.length, "assets");
     if (rel.assets?.length > 0) {
       console.log("Asset names:", rel.assets.map((a: any) => a.name).join(", "));
     }
-    
+
     // Replace GitHub URLs with our proxy URLs for private repo
     return NextResponse.json({
       tag_name: rel.tag_name,

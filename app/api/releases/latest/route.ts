@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-const REPO_OWNER = "OpenCalendarsHQ";
-const REPO_NAME = "opencalendar";
+const REPO_OWNER = "iPulseHQ";
+const REPO_NAME = "PulseCalendar";
 
 interface TauriPlatform {
   signature: string;
@@ -34,8 +34,8 @@ export async function GET() {
     // Get all releases and find the latest non-prerelease
     const response = await fetch(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`,
-      { 
-        headers, 
+      {
+        headers,
         cache: 'no-store' // Disable cache for immediate updates
       }
     );
@@ -63,25 +63,25 @@ export async function GET() {
     // Parse assets and map to Tauri platforms
     for (const asset of release.assets || []) {
       const name = asset.name.toLowerCase();
-      
+
       // Windows x64 - Look for .msi.zip.sig files
       if (name.endsWith(".msi.zip.sig")) {
         const downloadUrl = asset.browser_download_url.replace(".sig", "");
         const sigResponse = await fetch(asset.browser_download_url, { headers });
         const signature = await sigResponse.text();
-        
+
         tauriResponse.platforms["windows-x86_64"] = {
           signature: signature.trim(),
           url: downloadUrl,
         };
       }
-      
+
       // Linux x64 - Look for .AppImage.tar.gz.sig files
       else if (name.includes("amd64") && name.endsWith(".appimage.tar.gz.sig")) {
         const downloadUrl = asset.browser_download_url.replace(".sig", "");
         const sigResponse = await fetch(asset.browser_download_url, { headers });
         const signature = await sigResponse.text();
-        
+
         tauriResponse.platforms["linux-x86_64"] = {
           signature: signature.trim(),
           url: downloadUrl,

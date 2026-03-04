@@ -17,13 +17,13 @@ export async function GET(
   // path will be like: ["v34", "OpenCalendars_0.2.0_x64_en-US.msi"]
   const tag = path[0];
   const filename = path.slice(1).join("/");
-  
-  const downloadUrl = `https://api.github.com/repos/OpenCalendarsHQ/opencalendar/releases/assets/${filename}`;
+
+  const downloadUrl = `https://api.github.com/repos/iPulseHQ/PulseCalendar/releases/assets/${filename}`;
 
   try {
     // First, get the release to find the asset ID
     const releaseResponse = await fetch(
-      `https://api.github.com/repos/OpenCalendarsHQ/opencalendar/releases/tags/${tag}`,
+      `https://api.github.com/repos/iPulseHQ/PulseCalendar/releases/tags/${tag}`,
       {
         headers: {
           Authorization: `token ${token}`,
@@ -57,7 +57,7 @@ export async function GET(
 
     // Stream the file back to the client
     const blob = await assetResponse.blob();
-    
+
     return new NextResponse(blob, {
       headers: {
         "Content-Type": assetResponse.headers.get("Content-Type") || "application/octet-stream",
