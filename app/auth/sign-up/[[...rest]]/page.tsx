@@ -1,16 +1,16 @@
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <div className="flex items-center justify-center w-full">
-      <SignIn
+      <SignUp
         appearance={{
           baseTheme: dark,
           elements: {
             rootBox: "w-full",
             card: "bg-transparent border-none shadow-none w-full",
-            headerTitle: "font-pixel text-3xl font-bold text-white",
+            headerTitle: "text-3xl font-bold text-white",
             headerSubtitle: "text-zinc-400",
             formButtonPrimary: 'bg-blue-600 hover:bg-blue-700 text-sm normal-case py-3',
             socialButtonsBlockButton: "bg-white text-neutral-900 hover:bg-neutral-100 border-none transition-colors",
@@ -21,8 +21,8 @@ export default function SignInPage() {
             dividerText: "text-zinc-500",
           }
         }}
-        signUpUrl="/auth/sign-up"
-        forceRedirectUrl="/dashboard"
+        signInUrl="/auth/sign-in"
+        forceRedirectUrl="/dashboard?onboarding=1"
       />
     </div>
   );
