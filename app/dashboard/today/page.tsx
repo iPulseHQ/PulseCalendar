@@ -64,7 +64,7 @@ export default function TodayPage() {
             <TimeIcon className="h-3.5 w-3.5" />
             <span className="text-xs capitalize">{todayFormatted}</span>
           </div>
-          <h1 className="mt-1 font-pixel text-xl font-bold text-foreground">{timeOfDay.greeting}</h1>
+          <h1 className="mt-1 text-xl font-bold text-foreground">{timeOfDay.greeting}</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">
             {events.length} evenement{events.length !== 1 ? "en" : ""} · {todayTodos.length} {todayTodos.length === 1 ? "taak" : "taken"}
           </p>

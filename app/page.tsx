@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
 export const metadata: Metadata = {
-  title: "OpenCalendars - Al je kalenders op één plek",
-  description: "OpenCalendars brengt al je Google Calendar en iCloud events samen in één overzichtelijke kalender. Gratis, open source en met desktop app.",
+  title: "PulseCalendar - Al je kalenders op één plek",
+  description: "PulseCalendar brengt al je Google Calendar en iCloud events samen in één overzichtelijke kalender. Gratis, open source en met desktop app.",
   alternates: {
     canonical: "/",
   },

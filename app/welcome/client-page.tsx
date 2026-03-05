@@ -122,7 +122,7 @@ export default function WelcomePage() {
       <header className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12">
         <Link href="/" className="flex items-center gap-3">
           <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
-          <span className="font-pixel text-2xl font-bold text-white uppercase tracking-tighter">{t("brand")}</span>
+          <span className="text-2xl font-bold text-white uppercase tracking-tight">{t("brand")}</span>
         </Link>
         <div className="flex items-center gap-3">
           <Link
@@ -173,7 +173,7 @@ export default function WelcomePage() {
 
           {/* Heading */}
           <div className="space-y-4">
-            <h1 className="font-pixel text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
+            <h1 className="text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
               {t("title")}
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-zinc-400 md:text-xl">
@@ -329,7 +329,7 @@ export default function WelcomePage() {
           <div className="flex items-center gap-3">
             <Image src="/icon.svg" alt="PulseCalendar"
               width={32} height={32} />
-            <span className="font-pixel text-lg font-bold text-white uppercase tracking-tighter">PULSECALENDAR</span>
+            <span className="text-lg font-bold text-white uppercase tracking-tight">PULSECALENDAR</span>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-4 text-sm">

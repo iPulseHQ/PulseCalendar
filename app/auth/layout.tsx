@@ -41,15 +41,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <Link href="/" className="flex items-center gap-3 relative z-10">
           <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
 
-          <span className="font-pixel text-2xl font-bold text-white">PULSECALENDAR</span>
+          <span className="text-2xl font-bold text-white tracking-tight">PULSECALENDAR</span>
 
         </Link>
 
         <div className="relative z-10">
-          <h1 className="mb-4 text-5xl font-pixel font-bold leading-tight text-white">
+          <h1 className="mb-4 text-5xl font-bold leading-tight text-white">
             Build <span className="text-blue-400">better schedules</span><br />
             with PulseCalendar
-
           </h1>
           <p className="text-xl text-zinc-400">
             Sync all your calendars and build insights.
@@ -71,7 +70,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <Link href="/" className="mb-8 flex items-center justify-center gap-3 lg:hidden">
             <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
 
-            <span className="font-pixel text-2xl font-bold text-white">PULSECALENDAR</span>
+            <span className="text-2xl font-bold text-white tracking-tight">PULSECALENDAR</span>
 
           </Link>
           {children}
