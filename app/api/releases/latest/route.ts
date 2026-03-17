@@ -20,37 +20,46 @@ interface TauriUpdateResponse {
 export async function GET() {
   const token = process.env.GITHUB_RELEASES_TOKEN;
 
-  if (!token) {
-    console.error("GITHUB_RELEASES_TOKEN not configured");
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-  }
-
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    Authorization: `token ${token}`,
+    "User-Agent": "PulseCalendar-opencalendar",
   };
+  if (token) {
+    headers.Authorization = `token ${token}`;
+  }
 
   try {
-    // Get all releases and find the latest non-prerelease
-    const response = await fetch(
-      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`,
+    // Prefer latest endpoint for a public release stream.
+    let releaseResponse = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest`,
       {
         headers,
-        cache: 'no-store' // Disable cache for immediate updates
+        cache: "no-store",
       }
     );
 
-    if (!response.ok) {
+    if (!releaseResponse.ok) {
+      releaseResponse = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`,
+        {
+          headers,
+          cache: "no-store",
+        }
+      );
+    }
+
+    if (!releaseResponse.ok) {
       return NextResponse.json(null, { status: 404 });
     }
 
-    const releases = await response.json();
-    if (!releases.length) {
+    const payload = await releaseResponse.json();
+    const release = Array.isArray(payload)
+      ? payload.find((r: { draft: boolean; prerelease: boolean }) => !r.draft && !r.prerelease) || payload[0]
+      : payload;
+
+    if (!release) {
       return NextResponse.json(null, { status: 404 });
     }
-
-    // Find first non-draft, non-prerelease release, or fallback to first release
-    const release = releases.find((r: { draft: boolean; prerelease: boolean }) => !r.draft && !r.prerelease) || releases[0];
 
     // Transform to Tauri updater format
     const tauriResponse: TauriUpdateResponse = {
@@ -67,7 +76,10 @@ export async function GET() {
       // Windows x64 - Look for .msi.zip.sig files
       if (name.endsWith(".msi.zip.sig")) {
         const downloadUrl = asset.browser_download_url.replace(".sig", "");
-        const sigResponse = await fetch(asset.browser_download_url, { headers });
+        const sigResponse = await fetch(asset.browser_download_url);
+        if (!sigResponse.ok) {
+          continue;
+        }
         const signature = await sigResponse.text();
 
         tauriResponse.platforms["windows-x86_64"] = {
@@ -79,7 +91,10 @@ export async function GET() {
       // Linux x64 - Look for .AppImage.tar.gz.sig files
       else if (name.includes("amd64") && name.endsWith(".appimage.tar.gz.sig")) {
         const downloadUrl = asset.browser_download_url.replace(".sig", "");
-        const sigResponse = await fetch(asset.browser_download_url, { headers });
+        const sigResponse = await fetch(asset.browser_download_url);
+        if (!sigResponse.ok) {
+          continue;
+        }
         const signature = await sigResponse.text();
 
         tauriResponse.platforms["linux-x86_64"] = {

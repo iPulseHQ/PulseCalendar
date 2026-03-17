@@ -8,57 +8,57 @@ export async function GET() {
 
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
+    "User-Agent": "PulseCalendar-opencalendar",
   };
   if (token) {
     headers.Authorization = `token ${token}`;
   }
 
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`;
-  console.log("Fetching releases from:", url);
-  console.log("Using token:", token ? "Yes" : "No");
-
   try {
-    // Get all releases and find the latest non-prerelease
-    const response = await fetch(url, {
-      headers,
-      cache: 'no-store' // Disable cache for immediate updates
-    });
+    // First try the dedicated latest endpoint.
+    let releaseResponse = await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest`,
+      {
+        headers,
+        cache: "no-store",
+      }
+    );
 
-    console.log("GitHub API response:", response.status, response.statusText);
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      console.error("GitHub API error body:", errorBody);
-      return NextResponse.json(null);
+    if (!releaseResponse.ok) {
+      // Fallback: list releases and pick first non-draft/non-prerelease.
+      releaseResponse = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`,
+        {
+          headers,
+          cache: "no-store",
+        }
+      );
     }
 
-    const releases = await response.json();
-    console.log("Total releases found:", releases.length);
-
-    if (!releases.length) {
-      console.error("No releases found");
-      return NextResponse.json(null);
+    if (!releaseResponse.ok) {
+      return NextResponse.json(null, { status: 404 });
     }
 
-    // Find first non-draft, non-prerelease release, or fallback to first release
-    const rel = releases.find((r: { draft: boolean; prerelease: boolean }) => !r.draft && !r.prerelease) || releases[0];
+    const payload = await releaseResponse.json();
 
-    console.log("Selected release:", rel.tag_name, "with", rel.assets?.length, "assets");
-    if (rel.assets?.length > 0) {
-      console.log("Asset names:", rel.assets.map((a: any) => a.name).join(", "));
+    const release = Array.isArray(payload)
+      ? payload.find((r: { draft: boolean; prerelease: boolean }) => !r.draft && !r.prerelease) || payload[0]
+      : payload;
+
+    if (!release) {
+      return NextResponse.json(null, { status: 404 });
     }
 
-    // Replace GitHub URLs with our proxy URLs for private repo
     return NextResponse.json({
-      tag_name: rel.tag_name,
-      assets: rel.assets.map((a: { name: string; browser_download_url: string; size: number }) => ({
+      tag_name: release.tag_name,
+      assets: (release.assets || []).map((a: { name: string; browser_download_url: string; size: number }) => ({
         name: a.name,
-        browser_download_url: `/api/releases/download/${rel.tag_name}/${a.name}`,
+        browser_download_url: a.browser_download_url,
         size: a.size,
       })),
     });
   } catch (error) {
-    console.error("Failed to fetch releases:", error);
-    return NextResponse.json(null);
+    console.error("Failed to fetch releases", error);
+    return NextResponse.json(null, { status: 500 });
   }
 }

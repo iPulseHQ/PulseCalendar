@@ -117,32 +117,49 @@
     "authenticationFailed": "Authenticatie mislukt. Sluit dit venster en probeer het opnieuw."
   },
   "Welcome": {
-    "title": "Al je kalenders op één plek",
-    "subtitle": "PulseCalendar brengt al je Google Calendar en iCloud events samen. Bouw betere schema's met een unified view van je tijd.",
+    "title": "Al je agenda's",
+    "titleAccent": "op één plek",
+    "subtitle": "PulseCalendar brengt Google Calendar, iCloud, Microsoft en CalDAV samen in één snel en overzichtelijk scherm.",
     "getStarted": "Aan de slag",
     "signIn": "Inloggen",
     "brand": "PULSECALENDAR",
-    "github": "GitHub",
     "privacy": "Privacy",
     "terms": "Voorwaarden",
     "madeBy": "Gemaakt door",
+    "providersTitle": "Al je accounts, één overzicht",
     "features": {
-      "syncTitle": "Multi-Kalender Sync",
-      "syncDesc": "Verbind Google Calendar en iCloud in één overzicht",
-      "recurringTitle": "Herhalende Events",
-      "recurringDesc": "Volledige ondersteuning voor herhalende events met flexibele opties",
-      "openSourceTitle": "Open Source",
-      "openSourceDesc": "Gratis en open source software gebouwd voor de community"
+      "multiAccountTitle": "Meerdere accounts",
+      "multiAccountDesc": "Verbind Google, iCloud, Microsoft en CalDAV, alles in één overzicht met kleurcodering per agenda",
+      "desktopTitle": "Desktop app",
+      "desktopDesc": "Native app voor Windows, macOS en Linux met offline ondersteuning",
+      "recurringTitle": "Terugkerende afspraken",
+      "recurringDesc": "Volledige ondersteuning voor terugkerende afspraken, uitzonderingen en aangepaste regels",
+      "tasksTitle": "Taken",
+      "tasksDesc": "Geintegreerd takenbeheer naast je agenda-afspraken",
+      "privacyTitle": "Privacy voorop",
+      "privacyDesc": "Je agenda-data gaat nooit via onze servers, alleen directe verbindingen"
+    },
+    "how": {
+      "title": "Hoe werkt het",
+      "subtitle": "Al je agenda's, samengevoegd in drie stappen",
+      "step1Title": "Verbind je accounts",
+      "step1Desc": "Koppel je Google-, iCloud-, Microsoft- of CalDAV-agenda met één klik",
+      "step2Title": "Alles in één oogopslag",
+      "step2Desc": "Al je afspraken uit alle accounts verschijnen in één helder kalenderoverzicht",
+      "step3Title": "Altijd gesynchroniseerd",
+      "step3Desc": "Wijzigingen synchroniseren automatisch, in de browser en in de desktop app"
     },
     "download": {
-      "title": "Desktop App",
+      "title": "Desktop app",
       "subtitle": "Native prestaties met offline ondersteuning",
       "comingSoon": "Niet beschikbaar",
       "version": "Versie",
-      "windowsLabel": "Windows (.msi)",
-      "macLabel": "macOS (.dmg)",
-      "linuxLabel": "Linux (.AppImage)"
-    }
+      "windowsLabel": "Windows",
+      "macLabel": "macOS",
+      "linuxLabel": "Linux"
+    },
+    "cta": "Klaar om je agenda te vereenvoudigen?",
+    "ctaDesc": "Gratis en nu meteen beschikbaar in je browser en als desktop app."
   },
   "Onboarding": {
     "welcomeTitle": "Welkom bij PulseCalendar",

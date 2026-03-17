@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Loader2, RotateCcw } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
+import { Loader2, RotateCcw, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -98,9 +98,14 @@ export function AccountTab() {
         </div>
 
         <div className="pt-6 border-t border-border">
-          <p className="text-xs text-muted-foreground">
-            Meer account instellingen komen binnenkort beschikbaar, zoals wachtwoord wijzigen en account verwijderen.
-          </p>
+          <h2 className="text-sm font-semibold text-foreground mb-4">Sessie</h2>
+          <button
+            onClick={() => signOut({ callbackUrl: "/welcome" })}
+            className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-500 hover:bg-red-500/20 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Uitloggen
+          </button>
         </div>
       </div>
     </div>

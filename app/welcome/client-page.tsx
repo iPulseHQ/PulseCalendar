@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import Aurora from "@/components/animations/aurora";
 import {
   Calendar,
-  Github,
   Download,
+  Users,
+  Monitor,
+  RefreshCw,
+  ListTodo,
+  Shield,
+  ArrowRight,
+  Check,
 } from "lucide-react";
 
-// Custom SVG icons matching sidebar
 function AppleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -31,7 +35,7 @@ function WindowsIcon({ className }: { className?: string }) {
 function LinuxIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489.117.779.537 1.537 1.168 2.069.63.532 1.458.811 2.342.811.36 0 .724-.052 1.076-.157.652-.195 1.245-.566 1.707-1.074.463.508 1.055.879 1.707 1.074.352.105.716.157 1.076.157.884 0 1.712-.279 2.342-.811.631-.532 1.051-1.29 1.168-2.069.123-.805-.009-1.657-.287-2.489-.589-1.771-1.831-3.47-2.716-4.521-.75-1.067-.974-1.928-1.05-3.02-.065-1.491 1.056-5.965-3.17-6.298-.165-.013-.325-.021-.48-.021zm-1.5 1.5c.052 0 .105.002.158.006 3.645.285 2.747 4.307 2.812 5.511.085 1.573.376 2.622 1.232 3.836.82 1.164 1.972 2.762 2.511 4.382.227.678.329 1.382.237 2.025-.082.59-.386 1.152-.855 1.549-.47.397-1.082.596-1.695.596-.264 0-.53-.038-.786-.114-.507-.151-.962-.452-1.314-.819-.352.367-.807.668-1.314.819-.256.076-.522.114-.786.114-.613 0-1.225-.199-1.695-.596-.469-.397-.773-.959-.855-1.549-.092-.643.01-1.347.237-2.025.539-1.62 1.691-3.218 2.511-4.382.856-1.214 1.147-2.263 1.232-3.836.065-1.204-.833-5.226 2.812-5.511.053-.004.106-.006.158-.006zm-.75 3.75c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm3 0c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm-7.5 6c-.414 0-.75.336-.75.75s.336.75.75.75.75-.336.75-.75-.336-.75-.75-.75zm12 0c-.414 0-.75.336-.75.75s.336.75.75.75.75-.336.75-.75-.336-.75-.75-.75z" />
+      <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489.117.779.537 1.537 1.168 2.069.63.532 1.458.811 2.342.811.36 0 .724-.052 1.076-.157.652-.195 1.245-.566 1.707-1.074.463.508 1.055.879 1.707 1.074.352.105.716.157 1.076.157.884 0 1.712-.279 2.342-.811.631-.532 1.051-1.29 1.168-2.069.123-.805-.009-1.657-.287-2.489-.589-1.771-1.831-3.47-2.716-4.521-.75-1.067-.974-1.928-1.05-3.02-.065-1.491 1.056-5.965-3.17-6.298-.165-.013-.325-.021-.48-.021z" />
     </svg>
   );
 }
@@ -52,7 +56,7 @@ export default function WelcomePage() {
   const [locale, setLocale] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [release, setRelease] = useState<Release | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loadingRelease, setLoadingRelease] = useState(true);
   const [winFormat, setWinFormat] = useState<"msi" | "exe">("msi");
 
   useEffect(() => {
@@ -68,28 +72,24 @@ export default function WelcomePage() {
   useEffect(() => {
     async function fetchRelease() {
       try {
-        // Use internal API that has access to the GitHub token
         const response = await fetch("/api/releases");
         if (response.ok) {
           const data = await response.json();
           setRelease(data);
         }
-      } catch (err) {
-        console.error("Error fetching release:", err);
+      } catch {
+        // silent
       } finally {
-        setLoading(false);
+        setLoadingRelease(false);
       }
     }
     fetchRelease();
   }, []);
 
   const getAsset = (ext: string) =>
-    release?.assets.find((a) =>
-      a.name.toLowerCase().endsWith(ext.toLowerCase())
-    );
+    release?.assets.find((a) => a.name.toLowerCase().endsWith(ext.toLowerCase()));
 
-  const formatSize = (bytes: number) =>
-    (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  const formatSize = (bytes: number) => (bytes / (1024 * 1024)).toFixed(1) + " MB";
 
   const winAsset = winFormat === "msi"
     ? (getAsset(".msi") || getAsset(".exe"))
@@ -97,263 +97,323 @@ export default function WelcomePage() {
   const macAsset = getAsset(".dmg");
   const linuxAsset = getAsset(".AppImage");
 
+  const providers = [
+    { name: "Google Calendar", color: "text-blue-500 border-blue-500/30 bg-blue-500/5" },
+    { name: "iCloud", color: "text-foreground border-border bg-muted/50" },
+    { name: "Microsoft", color: "text-cyan-500 border-cyan-500/30 bg-cyan-500/5" },
+    { name: "CalDAV", color: "text-purple-500 border-purple-500/30 bg-purple-500/5" },
+  ];
+
+  const features = [
+    { icon: Users, key: "multiAccount" as const },
+    { icon: Monitor, key: "desktop" as const },
+    { icon: RefreshCw, key: "recurring" as const },
+    { icon: ListTodo, key: "tasks" as const },
+    { icon: Shield, key: "privacy" as const },
+  ];
+
+  const steps = [
+    { n: "1", key: "step1" as const },
+    { n: "2", key: "step2" as const },
+    { n: "3", key: "step3" as const },
+  ];
+
   return (
-    <div className="relative flex min-h-screen flex-col bg-black overflow-hidden">
-      {/* Aurora WebGL Background */}
-      <div className="absolute inset-0 w-full h-full">
-        <Aurora
-          colorStops={["#0080ff", "#00ffff", "#004080"]}
-          blend={0.5}
-          amplitude={1.0}
-          speed={1}
-        />
-      </div>
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.15)_0%,transparent_50%)]" />
-        <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black/40 to-transparent" />
-        <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black/40 to-transparent" />
-      </div>
-
+    <div className="min-h-screen bg-background text-foreground">
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-6 py-6 md:px-12">
-        <Link href="/" className="flex items-center gap-3">
-          <Image src="/icon.svg" alt="PulseCalendar" width={40} height={40} />
-          <span className="text-2xl font-bold text-white uppercase tracking-tight">{t("brand")}</span>
-        </Link>
-        <div className="flex items-center gap-3">
-          <Link
-            href="https://github.com/iPulseHQ/PulseCalendar"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-900/70 hover:text-white"
-          >
-            <Github className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("github")}</span>
+      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image src="/icon.svg" alt="PulseCalendar" width={28} height={28} />
+            <span className="text-sm font-bold tracking-tight uppercase">{t("brand")}</span>
           </Link>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                if (locale !== "nl") {
-                  document.cookie = `NEXT_LOCALE=nl; path=/; max-age=31536000; SameSite=Lax`;
-                  window.location.reload();
-                }
-              }}
-              className={`px-2 py-1 rounded text-sm ${mounted && locale === "nl" ? "bg-zinc-800 text-white" : "text-zinc-300"}`}
+            {mounted && (
+              <div className="flex items-center gap-1 rounded-md border border-border p-0.5 text-xs">
+                <button
+                  onClick={() => {
+                    document.cookie = `NEXT_LOCALE=nl; path=/; max-age=31536000; SameSite=Lax`;
+                    window.location.reload();
+                  }}
+                  className={`rounded px-2 py-1 transition-colors ${locale === "nl" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  NL
+                </button>
+                <button
+                  onClick={() => {
+                    document.cookie = `NEXT_LOCALE=en; path=/; max-age=31536000; SameSite=Lax`;
+                    window.location.reload();
+                  }}
+                  className={`rounded px-2 py-1 transition-colors ${locale === "en" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  EN
+                </button>
+              </div>
+            )}
+            <Link
+              href="/auth/sign-in"
+              className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
             >
-              NL
-            </button>
-            <button
-              onClick={() => {
-                if (locale !== "en") {
-                  document.cookie = `NEXT_LOCALE=en; path=/; max-age=31536000; SameSite=Lax`;
-                  window.location.reload();
-                }
-              }}
-              className={`px-2 py-1 rounded text-sm ${mounted && locale === "en" ? "bg-zinc-800 text-white" : "text-zinc-300"}`}
+              {t("signIn")}
+            </Link>
+            <Link
+              href="/auth/sign-up"
+              className="rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background hover:bg-foreground/90 transition-colors"
             >
-              EN
-            </button>
+              {t("getStarted")}
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-12 text-center md:px-12">
-        <div className="max-w-4xl space-y-8">
-          {/* Icon */}
-          <div className="flex justify-center">
-            <div className="rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-4 backdrop-blur-sm border border-blue-500/20">
-              <Calendar className="h-12 w-12 text-blue-400" />
-            </div>
+      {/* Hero */}
+      <section className="relative overflow-hidden px-6 pb-20 pt-24">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--primary)/0.08),transparent)]" />
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-1.5 text-sm text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            PulseCalendar by iPulse
           </div>
-
-          {/* Heading */}
-          <div className="space-y-4">
-            <h1 className="text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-              {t("title")}
-            </h1>
-            <p className="mx-auto max-w-2xl text-lg text-zinc-400 md:text-xl">
-              {t("subtitle")}
-            </p>
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <h1 className="mb-4 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+            {t("title")}
+            <br />
+            <span className="bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              {t("titleAccent")}
+            </span>
+          </h1>
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
+            {t("subtitle")}
+          </p>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/auth/sign-up"
-              className="w-full rounded-lg bg-blue-600 px-8 py-3 font-medium text-white transition-colors hover:bg-blue-700 sm:w-auto"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-foreground px-8 text-sm font-semibold text-background transition-all hover:bg-foreground/90"
             >
               {t("getStarted")}
+              <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/auth/sign-in"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-8 py-3 font-medium text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-900/70 hover:text-white sm:w-auto"
+              className="inline-flex h-11 items-center justify-center rounded-lg border border-border px-8 text-sm font-semibold text-foreground transition-all hover:bg-muted"
             >
               {t("signIn")}
             </Link>
           </div>
-
-          {/* Features */}
-          <div className="grid gap-6 pt-12 md:grid-cols-3">
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-sm">
-              <h3 className="mb-2 font-semibold text-white">{t("features.syncTitle")}</h3>
-              <p className="text-sm text-zinc-400">
-                {t("features.syncDesc")}
-              </p>
-            </div>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-sm">
-              <h3 className="mb-2 font-semibold text-white">{t("features.recurringTitle")}</h3>
-              <p className="text-sm text-zinc-400">
-                {t("features.recurringDesc")}
-              </p>
-            </div>
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6 backdrop-blur-sm">
-              <h3 className="mb-2 font-semibold text-white">{t("features.openSourceTitle")}</h3>
-              <p className="text-sm text-zinc-400">
-                {t("features.openSourceDesc")}
-              </p>
-            </div>
-          </div>
-
-          {/* Desktop Downloads Section */}
-          <div className="border-t border-zinc-800 pt-12 mt-4">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-white">
-                  {t("download.title")}
-                </h2>
-                <p className="text-sm text-zinc-400">
-                  {t("download.subtitle")}
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                {/* Windows */}
-                {loading ? (
-                  <div className="h-11 w-48 animate-pulse rounded-lg bg-zinc-800" />
-                ) : winAsset ? (
-                  <div className="flex flex-col gap-2">
-                    <a href={winAsset.browser_download_url} target="_blank" rel="noopener noreferrer">
-                      <button className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900/60 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-blue-500/50 hover:bg-zinc-800/80 hover:text-white">
-                        <WindowsIcon className="h-4 w-4" />
-                        {t("download.windowsLabel")}
-                        <span className="text-xs text-zinc-500">{formatSize(winAsset.size)}</span>
-                      </button>
-                    </a>
-                    <div className="flex items-center justify-center gap-2 text-xs">
-                      <button
-                        onClick={() => setWinFormat("msi")}
-                        className={`px-2 py-1 rounded transition-colors ${winFormat === "msi"
-                          ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
-                          : "text-zinc-500 hover:text-zinc-300"
-                          }`}
-                      >
-                        .msi
-                      </button>
-                      <span className="text-zinc-600">/</span>
-                      <button
-                        onClick={() => setWinFormat("exe")}
-                        className={`px-2 py-1 rounded transition-colors ${winFormat === "exe"
-                          ? "bg-blue-500/20 text-blue-300 border border-blue-500/40"
-                          : "text-zinc-500 hover:text-zinc-300"
-                          }`}
-                      >
-                        .exe
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <button disabled className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-5 py-2.5 text-sm text-zinc-600 cursor-not-allowed">
-                    <WindowsIcon className="h-4 w-4" />
-                    {t("download.windowsLabel")}
-                    <span className="text-xs">{t("download.comingSoon")}</span>
-                  </button>
-                )}
-
-                {/* macOS */}
-                {loading ? (
-                  <div className="h-11 w-48 animate-pulse rounded-lg bg-zinc-800" />
-                ) : macAsset ? (
-                  <a href={macAsset.browser_download_url} target="_blank" rel="noopener noreferrer">
-                    <button className="inline-flex items-center gap-2 rounded-lg border border-blue-500/40 bg-blue-500/10 px-5 py-2.5 text-sm font-medium text-blue-300 transition-colors hover:border-blue-500/60 hover:bg-blue-500/20 hover:text-blue-200">
-                      <AppleIcon className="h-4 w-4" />
-                      {t("download.macLabel")}
-                      <span className="text-xs text-blue-400/60">{formatSize(macAsset.size)}</span>
-                    </button>
-                  </a>
-                ) : (
-                  <button disabled className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-5 py-2.5 text-sm text-zinc-600 cursor-not-allowed">
-                    <AppleIcon className="h-4 w-4" />
-                    {t("download.macLabel")}
-                    <span className="text-xs">{t("download.comingSoon")}</span>
-                  </button>
-                )}
-
-                {/* Linux */}
-                {loading ? (
-                  <div className="h-11 w-48 animate-pulse rounded-lg bg-zinc-800" />
-                ) : linuxAsset ? (
-                  <a href={linuxAsset.browser_download_url} target="_blank" rel="noopener noreferrer">
-                    <button className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-900/60 px-5 py-2.5 text-sm font-medium text-zinc-200 transition-colors hover:border-orange-500/50 hover:bg-zinc-800/80 hover:text-white">
-                      <LinuxIcon className="h-4 w-4" />
-                      {t("download.linuxLabel")}
-                      <span className="text-xs text-zinc-500">{formatSize(linuxAsset.size)}</span>
-                    </button>
-                  </a>
-                ) : (
-                  <button disabled className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/40 px-5 py-2.5 text-sm text-zinc-600 cursor-not-allowed">
-                    <LinuxIcon className="h-4 w-4" />
-                    {t("download.linuxLabel")}
-                    <span className="text-xs">{t("download.comingSoon")}</span>
-                  </button>
-                )}
-              </div>
-
-              {release && (
-                <p className="text-xs text-zinc-600">
-                  {t("download.version")}: {release.tag_name}
-                </p>
-              )}
-            </div>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5"><Check className="h-4 w-4" /> {t("features.multiAccountTitle")}</span>
+            <span className="flex items-center gap-1.5"><Check className="h-4 w-4" /> {t("features.desktopTitle")}</span>
+            <span className="flex items-center gap-1.5"><Check className="h-4 w-4" /> {t("download.title")}</span>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Providers */}
+      <section className="border-y border-border bg-muted/20 px-6 py-12">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="mb-6 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+            {t("providersTitle")}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {providers.map((p) => (
+              <span
+                key={p.name}
+                className={`rounded-xl border px-5 py-2 text-sm font-medium ${p.color}`}
+              >
+                {p.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <div className="mb-4 inline-block rounded-md border border-border bg-muted px-4 py-1 text-sm font-medium">
+              {t("how.title")}
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {t("how.subtitle")}
+            </h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {steps.map((step) => (
+              <div
+                key={step.n}
+                className="rounded-xl border border-border bg-card p-8 text-center transition-shadow hover:shadow-md"
+              >
+                <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-muted text-xl font-bold">
+                  {step.n}
+                </div>
+                <h3 className="mb-2 text-lg font-semibold">{t(`how.${step.key}Title`)}</h3>
+                <p className="text-sm text-muted-foreground">{t(`how.${step.key}Desc`)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="bg-muted/20 px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <div className="mb-4 inline-block rounded-md border border-border bg-card px-4 py-1 text-sm font-medium">
+              Features
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Alles wat je nodig hebt
+            </h2>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(({ icon: Icon, key }) => (
+              <div
+                key={key}
+                className="rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md"
+              >
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-muted">
+                  <Icon className="h-5 w-5 text-foreground" />
+                </div>
+                <h3 className="mb-1.5 font-semibold">{t(`features.${key}Title`)}</h3>
+                <p className="text-sm text-muted-foreground">{t(`features.${key}Desc`)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Desktop Download */}
+      <section className="px-6 py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-14 text-center">
+            <div className="mb-4 inline-block rounded-md border border-border bg-muted px-4 py-1 text-sm font-medium">
+              {t("download.title")}
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {t("download.subtitle")}
+            </h2>
+          </div>
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            {/* Windows */}
+            {loadingRelease ? (
+              <div className="h-11 w-44 animate-pulse rounded-lg bg-muted" />
+            ) : winAsset ? (
+              <div className="flex flex-col items-center gap-2">
+                <a
+                  href={winAsset.browser_download_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                >
+                  <WindowsIcon className="h-4 w-4" />
+                  {t("download.windowsLabel")}
+                  <span className="text-xs text-muted-foreground">{formatSize(winAsset.size)}</span>
+                </a>
+                <div className="flex items-center gap-2 text-xs">
+                  {(["msi", "exe"] as const).map((fmt) => (
+                    <button
+                      key={fmt}
+                      onClick={() => setWinFormat(fmt)}
+                      className={`rounded px-2 py-0.5 transition-colors ${winFormat === fmt ? "bg-muted text-foreground border border-border" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      .{fmt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <button disabled className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm text-muted-foreground cursor-not-allowed opacity-50">
+                <WindowsIcon className="h-4 w-4" />
+                {t("download.windowsLabel")}
+                <span className="text-xs">{t("download.comingSoon")}</span>
+              </button>
+            )}
+
+            {/* macOS */}
+            {loadingRelease ? (
+              <div className="h-11 w-44 animate-pulse rounded-lg bg-muted" />
+            ) : macAsset ? (
+              <a
+                href={macAsset.browser_download_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+              >
+                <AppleIcon className="h-4 w-4" />
+                {t("download.macLabel")}
+                <span className="text-xs opacity-60">{formatSize(macAsset.size)}</span>
+              </a>
+            ) : (
+              <button disabled className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm text-muted-foreground cursor-not-allowed opacity-50">
+                <AppleIcon className="h-4 w-4" />
+                {t("download.macLabel")}
+                <span className="text-xs">{t("download.comingSoon")}</span>
+              </button>
+            )}
+
+            {/* Linux */}
+            {loadingRelease ? (
+              <div className="h-11 w-44 animate-pulse rounded-lg bg-muted" />
+            ) : linuxAsset ? (
+              <a
+                href={linuxAsset.browser_download_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <LinuxIcon className="h-4 w-4" />
+                {t("download.linuxLabel")}
+                <span className="text-xs text-muted-foreground">{formatSize(linuxAsset.size)}</span>
+              </a>
+            ) : (
+              <button disabled className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 text-sm text-muted-foreground cursor-not-allowed opacity-50">
+                <LinuxIcon className="h-4 w-4" />
+                {t("download.linuxLabel")}
+                <span className="text-xs">{t("download.comingSoon")}</span>
+              </button>
+            )}
+          </div>
+          {release && (
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              {t("download.version")}: {release.tag_name}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-muted/20 px-6 py-24">
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-2xl border border-border bg-card p-12 text-center shadow-sm">
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-muted">
+              <Download className="h-7 w-7 text-foreground" />
+            </div>
+            <h2 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl">{t("cta")}</h2>
+            <p className="mx-auto mb-8 max-w-xl text-muted-foreground">{t("ctaDesc")}</p>
+            <Link
+              href="/auth/sign-up"
+              className="inline-flex items-center gap-2 rounded-lg bg-foreground px-8 py-3 text-sm font-semibold text-background transition-all hover:bg-foreground/90"
+            >
+              {t("getStarted")}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-zinc-900 px-6 py-6 md:px-12">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-3">
-            <Image src="/icon.svg" alt="PulseCalendar"
-              width={32} height={32} />
-            <span className="text-lg font-bold text-white uppercase tracking-tight">PULSECALENDAR</span>
+      <footer className="border-t border-border px-6 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex items-center gap-2.5">
+            <Image src="/icon.svg" alt="PulseCalendar" width={24} height={24} />
+            <span className="text-sm font-bold tracking-tight uppercase">{t("brand")}</span>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-sm">
-              <Link
-                href="/privacy"
-                className="text-zinc-400 transition-colors hover:text-white"
-              >
-                {t("privacy")}
-              </Link>
-              <Link
-                href="/terms"
-                className="text-zinc-400 transition-colors hover:text-white"
-              >
-                {t("terms")}
-              </Link>
-            </div>
-            <Link
-              href="https://github.com/iPulseHQ/PulseCalendar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-500 transition-colors hover:text-zinc-400"
-            >
-              <Github className="h-5 w-5" />
-            </Link>
+          <div className="flex items-center gap-6 text-sm text-muted-foreground">
+            <Link href="/privacy" className="hover:text-foreground transition-colors">{t("privacy")}</Link>
+            <Link href="/terms" className="hover:text-foreground transition-colors">{t("terms")}</Link>
+            <a href="https://ipulse.one" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              {t("madeBy")} iPulse
+            </a>
           </div>
         </div>
       </footer>

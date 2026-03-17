@@ -117,32 +117,49 @@
     "authenticationFailed": "Authentication failed. Please close this window and try again."
   },
   "Welcome": {
-    "title": "Sync all your calendars in one place",
-    "subtitle": "PulseCalendar brings all your Google Calendar and iCloud events together. Build better schedules with a unified view of your time.",
-    "getStarted": "Get Started",
-    "signIn": "Sign In",
+    "title": "All your calendars",
+    "titleAccent": "in one place",
+    "subtitle": "PulseCalendar brings together Google Calendar, iCloud, Microsoft and CalDAV accounts in one clean, fast overview.",
+    "getStarted": "Get started",
+    "signIn": "Sign in",
     "brand": "PULSECALENDAR",
-    "github": "GitHub",
     "privacy": "Privacy",
     "terms": "Terms",
     "madeBy": "Made by",
+    "providersTitle": "All your accounts, one view",
     "features": {
-      "syncTitle": "Multi-Calendar Sync",
-      "syncDesc": "Connect Google Calendar and iCloud in one unified view",
-      "recurringTitle": "Recurring Events",
-      "recurringDesc": "Full support for recurring events with flexible editing options",
-      "openSourceTitle": "Open Source",
-      "openSourceDesc": "Free and open source software built for the community"
+      "multiAccountTitle": "Multiple accounts",
+      "multiAccountDesc": "Connect Google, iCloud, Microsoft and CalDAV, all in one view with per-calendar color coding",
+      "desktopTitle": "Desktop app",
+      "desktopDesc": "Native app for Windows, macOS and Linux with offline support",
+      "recurringTitle": "Recurring events",
+      "recurringDesc": "Full support for recurring events, exceptions and custom rules",
+      "tasksTitle": "Tasks",
+      "tasksDesc": "Integrated task management alongside your calendar events",
+      "privacyTitle": "Privacy first",
+      "privacyDesc": "Your calendar data never passes through our servers, only direct connections"
+    },
+    "how": {
+      "title": "How it works",
+      "subtitle": "Your calendars, united in three steps",
+      "step1Title": "Connect your accounts",
+      "step1Desc": "Link your Google, iCloud, Microsoft or CalDAV calendar in one click",
+      "step2Title": "See everything at a glance",
+      "step2Desc": "All your events from all accounts appear in one clear calendar view",
+      "step3Title": "Stay in sync",
+      "step3Desc": "Changes sync automatically, on the web and in the desktop app"
     },
     "download": {
-      "title": "Desktop App",
+      "title": "Desktop app",
       "subtitle": "Native performance with offline support",
       "comingSoon": "Not available",
       "version": "Version",
-      "windowsLabel": "Windows (.msi)",
-      "macLabel": "macOS (.dmg)",
-      "linuxLabel": "Linux (.AppImage)"
-    }
+      "windowsLabel": "Windows",
+      "macLabel": "macOS",
+      "linuxLabel": "Linux"
+    },
+    "cta": "Ready to simplify your calendar?",
+    "ctaDesc": "Free and available right now in your browser and as a desktop app."
   },
   "Onboarding": {
     "welcomeTitle": "Welcome to PulseCalendar",
